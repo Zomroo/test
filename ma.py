@@ -32,11 +32,14 @@ def start(bot, update):
 @app.on_callback_query()
 def callback(bot, update):
     if update.data == 'get_random_video':
+        # Create a filter object to only get videos
+        video_filter = filters.video
+
         # Get the chat history
         chat_history = bot.get_chat_history(
             chat_id=channel_id,
             limit=100,
-            filter=filters.video
+            filter=video_filter
         )
         videos = [message for message in chat_history]
         if videos:
