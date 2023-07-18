@@ -32,12 +32,9 @@ def start(bot, update):
 @app.on_callback_query()
 def callback(bot, update):
     if update.data == 'get_random_video':
-        # Get the chat history
-        chat_history = bot.get_chat_history(
-            chat_id=channel_id,
-            limit=100
-        )
-        videos = [message for message in chat_history if message.video]
+        # Fetch messages from the channel
+        messages = bot.iter_history(chat_id=channel_id, limit=100)
+        videos = [message for message in messages if message.video]
         if videos:
             random_video = random.choice(videos)
             # Forward the random video to the user
