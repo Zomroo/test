@@ -14,34 +14,21 @@ def get_random_video_from_channel():
     # Specify the channel username or id
     channel = '-1001226899835'
 
-    # Get the chat members in the channel
-    members = app.get_chat_members(chat_id=channel)
+    # Get the messages from the channel
+    messages = app.search_messages(chat_id=channel, filter='video', limit=100)
 
-    # Create an empty list to store the videos
-    videos = []
+    # Check if the list of messages is not empty
+    if messages.total_count > 0:
+        # Get a random message from the messages
+        random_message = random.choice(messages.messages)
 
-    # Iterate over the members
-    for member in members:
-        # Get the chat member details
-        chat_member = app.get_chat_member(chat_id=channel, user_id=member.user.id)
+        # Check if the random message is a video
+        if random_message.video:
+            # Return the random video
+            return random_message.video
 
-        # Check if the chat member has a last message
-        if chat_member.user.last_message:
-            # Get the last message
-            last_message = chat_member.user.last_message
-
-            # Check if the last message is a video
-            if last_message.video:
-                # Add the video to the list
-                videos.append(last_message.video)
-
-    # Check if the list of videos is not empty
-    if videos:
-        # Return a random video from the list
-        return random.choice(videos)
-    else:
-        # Return None if no videos are available
-        return None
+    # Return None if no videos are available
+    return None
 
 # Handler for /start command
 @app.on_message(filters.command('start'))
