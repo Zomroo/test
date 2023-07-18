@@ -7,6 +7,7 @@ api_id = '14091414'
 api_hash = '1e26ebacf23466ed6144d29496aa5d5b'
 bot_token = '6377609542:AAF004ZVuKIC3LREINCBhByXJ7gdP6AbTe8'
 
+
 # Replace 'YOUR_CHANNEL_ID' with your database channel ID
 channel_id = '-1001226899835'
 
@@ -32,9 +33,8 @@ def start(bot, update):
 @app.on_callback_query()
 def callback(bot, update):
     if update.data == 'get_random_video':
-        # Get the chat history
-        chat_history = bot.iter_chat_history(chat_id=channel_id, limit=100)
-        videos = [message for message in chat_history if message.video]
+        # Get a random video from the database channel
+        videos = list(bot.get_chat_history(chat_id=channel_id, limit=100).videos)
         if videos:
             random_video = random.choice(videos)
             # Forward the random video to the user
