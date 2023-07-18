@@ -18,9 +18,9 @@ def get_random_video_from_channel():
     messages = app.search_messages(chat_id=channel, filter='video', limit=100)
 
     # Check if the list of messages is not empty
-    if messages.total_count > 0:
+    if len(messages) > 0:
         # Get a random message from the messages
-        random_message = random.choice(messages.messages)
+        random_message = random.choice(messages)
 
         # Check if the random message is a video
         if random_message.video:
