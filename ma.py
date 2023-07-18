@@ -9,13 +9,22 @@ bot_token = '6377609542:AAF004ZVuKIC3LREINCBhByXJ7gdP6AbTe8'
 
 app = Client('my_bot', api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
+# Define a custom filter to filter messages that contain video but not document
+def video_not_document_filter(_, __, message):
+    if message.video and not message.document:
+        return True
+    return False
+
+# Create the custom filter using filters.create
+video_not_document = filters.create(video_not_document_filter)
+
 # Define a function to get a random video from the channel
 def get_random_video_from_channel():
     # Specify the channel username or id
     channel = '-1001226899835'
 
-    # Get the messages from the channel
-    messages = list(app.search_messages(chat_id=channel, filter=filters.video | ~filters.document, limit=100))
+    # Get the messages from the channel using the custom filter
+    messages = list(app.search_messages(chat_id=channel, filter=video_not_document, limit=100))
 
     # Check if the list of messages is not empty
     if len(messages) > 0:
