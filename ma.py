@@ -17,11 +17,11 @@ def get_random_video_from_channel():
     # Create an empty list to store the videos
     videos = []
 
-    # Get the chat history of the channel
-    messages = app.get_chat_history(chat_id=channel, limit=100)
+    # Get the chat history
+    history = app.get_chat_history(chat_id=channel, limit=100)
 
-    # Iterate over the messages in the channel
-    for message in messages:
+    # Iterate over the messages in the history
+    for message in history:
         # Check if the message is a video
         if message.video:
             # Add the message to the list of videos
