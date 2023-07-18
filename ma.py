@@ -15,7 +15,7 @@ def get_random_video_from_channel():
     channel = '-1001226899835'
 
     # Get the messages from the channel
-    messages = list(app.search_messages(chat_id=channel, filter='video', limit=100))
+    messages = list(app.search_messages(chat_id=channel, filter=filters.video, limit=100))
 
     # Check if the list of messages is not empty
     if len(messages) > 0:
