@@ -17,8 +17,11 @@ def get_random_video_from_channel():
     # Create an empty list to store the videos
     videos = []
 
+    # Get the chat history of the channel
+    messages = app.get_chat_history(chat_id=channel, limit=100)
+
     # Iterate over the messages in the channel
-    for message in app.iter_history(channel):
+    for message in messages:
         # Check if the message is a video
         if message.video:
             # Add the message to the list of videos
@@ -73,4 +76,3 @@ def button_click(client, query):
 
 # Start the bot
 app.run()
-
