@@ -32,22 +32,21 @@ def start(bot, update):
 # Callback handler for inline keyboard button
 @app.on_callback_query()
 def callback(bot, update):
-    query = update.callback_query
-    if query.data == 'get_random_video':
+    if update.data == 'get_random_video':
         # Get a random video from the database channel
         videos = bot.get_chat_history(chat_id=channel_id, limit=100).videos
         if videos:
             random_video = random.choice(videos)
             # Forward the random video to the user
             bot.forward_messages(
-                chat_id=query.message.chat.id,
+                chat_id=update.message.chat.id,
                 from_chat_id=channel_id,
                 message_ids=random_video.message_id
             )
         else:
             # Send an error message if there are no videos in the database channel
             bot.send_message(
-                chat_id=query.message.chat.id,
+                chat_id=update.message.chat.id,
                 text="No videos found in the database channel."
             )
 
