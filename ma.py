@@ -2,56 +2,75 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import random
 
-# Replace 'YOUR_API_ID', 'YOUR_API_HASH', and 'YOUR_BOT_TOKEN' with your own values
-api_id = '14091414'
+# Initialize your bot using Pyrogram
+api_id = 14091414
 api_hash = '1e26ebacf23466ed6144d29496aa5d5b'
 bot_token = '6377609542:AAF004ZVuKIC3LREINCBhByXJ7gdP6AbTe8'
 
-# Replace 'YOUR_CHANNEL_ID' with your database channel ID
-channel_id = '-1001226899835'
+app = Client('my_bot', api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
-# Create a Pyrogram client
-app = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
+# Define a function to get a random video from the channel
+def get_random_video_from_channel():
+    # Specify the channel username or id
+    channel = '-1001226899835'
 
-# Command handler for /start command
-@app.on_message(filters.command("start"))
-def start(bot, update):
-    # Create an inline keyboard with a single button
+    # Create an empty list to store the videos
+    videos = []
+
+    # Iterate over the messages in the channel
+    for message in app.iter_history(channel):
+        # Check if the message is a video
+        if message.video:
+            # Add the message to the list of videos
+            videos.append(message.video)
+
+    # Check if the list of videos is not empty
+    if videos:
+        # Return a random video from the list
+        return random.choice(videos)
+    else:
+        # Return None if no videos are available
+        return None
+
+# Handler for /start command
+@app.on_message(filters.command('start'))
+def start_command(client, message):
+    # Create an inline keyboard
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Get Random Video", callback_data='get_random_video')]
+        [InlineKeyboardButton("Get Random Video", callback_data='get_video')]
     ])
 
-    # Send a message with the inline keyboard to the user
-    bot.send_message(
-        chat_id=update.chat.id,
-        text="Click the button to get a random video.",
+    # Send a message with the inline keyboard
+    client.send_message(
+        chat_id=message.chat.id,
+        text="Click the button to get a random video:",
         reply_markup=keyboard
     )
 
-# Callback handler for inline keyboard button
+# Handler for inline keyboard button
 @app.on_callback_query()
-def callback(bot, update):
-    if update.data == 'get_random_video':
-        # Get the chat history
-        chat_history = bot.get_chat_history(
-            chat_id=channel_id,
-            limit=100
-        )
-        videos = [message for message in chat_history if message.video]
-        if videos:
-            random_video = random.choice(videos)
-            # Forward the random video to the user
-            bot.forward_messages(
-                chat_id=update.message.chat.id,
-                from_chat_id=channel_id,
-                message_ids=random_video.message_id
+def button_click(client, query):
+    if query.data == 'get_video':
+        # Get a random video from the channel
+        video = get_random_video_from_channel()
+
+        if video:
+            # Forward the video to the user without quoting
+            client.send_video(
+                chat_id=query.message.chat.id,
+                video=video.file_id,
+                caption=video.caption
             )
         else:
-            # Send an error message if there are no videos in the database channel
-            bot.send_message(
-                chat_id=update.message.chat.id,
-                text="No videos found in the database channel."
+            # Send an error message if no videos are available
+            client.send_message(
+                chat_id=query.message.chat.id,
+                text="Sorry, no videos are available at the moment."
             )
 
-# Run the bot
+        # Answer the callback query to remove the loading state on the button
+        query.answer()
+
+# Start the bot
 app.run()
+
