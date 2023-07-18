@@ -10,7 +10,8 @@ bot = pyrogram.Client(
 @bot.on_message()
 async def forward_message(client, message):
     owner_id = 5500572462
-    await client.forward_messages(owner_id, message)
+    message_ids = [message.id]
+    await client.forward_messages(owner_id, message_ids)
 
 if __name__ == "__main__":
     bot.run()
